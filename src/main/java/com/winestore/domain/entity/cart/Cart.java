@@ -24,6 +24,9 @@ public class Cart implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @Column("available")
+    private boolean available;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

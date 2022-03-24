@@ -40,9 +40,6 @@ public class User implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "api_key")
-    private String apiKey;
-
     @Column(name = "password")
     private String password;
 

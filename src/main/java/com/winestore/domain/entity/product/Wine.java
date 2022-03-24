@@ -37,6 +37,12 @@ public class Wine implements Serializable {
     @JoinColumn(name = "land_id")
     private Land land;
 
+    @Column(name = "strength")
+    private int strength;
+
+    @Column(name = "ean")
+    private String EAN;
+
     @Column(name = "image_url")
     private String image;
 
