@@ -1,6 +1,6 @@
 package com.winestore.domain.entity.user;
 
-import com.winestore.domain.Role;
+import com.winestore.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

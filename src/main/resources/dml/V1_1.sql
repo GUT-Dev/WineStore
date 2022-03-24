@@ -5,7 +5,7 @@ CREATE TABLE address
     land        varchar(16) NOT NULL,
     city        varchar(16) NOT NULL,
     street      varchar(32) NOT NULL,
-    home_number varchar(8)  NOT NULL
+    home_number varchar(16) NOT NULL
 );
 
 CREATE TABLE "user"
@@ -42,24 +42,37 @@ CREATE TABLE land
     name varchar(32) NOT NULL
 );
 
+CREATE TABLE brand
+(
+    id   bigserial   NOT NULL PRIMARY KEY,
+    name varchar(32) NOT NULL
+);
+
 CREATE TABLE wine
 (
     id              bigserial                   NOT NULL PRIMARY KEY,
-    name            varchar(32)                 NOT NULL,
+    name            varchar(64)                 NOT NULL,
     descriptions    varchar(256),
-    strength        smallint                    NOT NULL,
+    type            smallint                    NOT NULL,
+    sweetness       smallint                    NOT NULL,
+    strength        float                       NOT NULL,
+    sugar_amount    smallint,
     ean             varchar(32)                 NOT NULL,
     image_url       varchar(64),
     enable          boolean                     NOT NULL DEFAULT false,
-    price           varchar(32),
+    price           int,
     discount        smallint                    NOT NULL DEFAULT 0,
     amount_for_sale int                         NOT NULL DEFAULT 0,
     sold_amount     int                         NOT NULL DEFAULT 0,
     land_id         bigint                      NOT NULL,
+    region          varchar(32),
+    brand_id        bigint                      NOT NULL,
     created_at      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
 
     FOREIGN KEY (land_id)
-        REFERENCES wine (id)
+        REFERENCES wine (id),
+    FOREIGN KEY (brand_id)
+        REFERENCES brand (id)
 );
 
 CREATE TABLE customer_review
