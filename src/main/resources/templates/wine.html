@@ -1,10 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="icon" href="data:,">
     <meta charset="UTF-8">
     <title>Wine</title>
 </head>
 <body>
+
+<div>
+    <h1 th:text="${item.wine.name}"></h1><br>
+    оцінка: <p th:text="${item.rating}"></p>
+    опис: <p th:text="${item.wine.descriptions}"></p>
+    тип: <p th:text="${item.wine.type.toString().toLowerCase()}"></p>
+    солодкість: <p th:text="${item.wine.sweetness.toString().toLowerCase()}"></p>
+    міцність: <p th:text="${item.wine.strength}"></p>
+    кількість цукру г/л: <p th:text="${item.wine.sugarAmount}"></p>
+    артикл: <p th:text="${item.wine.EAN}"></p>
+    ціна: <p th:text="${item.wine.price}"></p>
+    знижка: <p th:text="${item.wine.discount}"></p>
+    країна: <p th:text="${item.wine.land.name}"></p>
+    регіон: <p th:text="${item.wine.region}"></p>
+    бренд: <p th:text="${item.wine.brand.name}"></p>
+    картинка: <img th:src="${item.wine.image}">
+</div>
+
+<br><br><br>
+
+<div>
+    <h3>Відгуки:</h3><br>
+    <div th:each="review : ${reviews}">
+        Юзер: <p th:text="${review.id.user.firstName}">
+        Відгук:<br>
+        <p th:text="${review.message}">
+            Оцінка:
+        <p th:text="${review.rating}">
+            -------------------------------------------------------
+    </div>
+</div>
 
 </body>
 </html>

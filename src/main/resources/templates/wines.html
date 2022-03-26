@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>wines</title>
 </head>
 <body>
-
+<div th:each="item : ${items}">
+    <div>
+        <h3 th:text="${item.wine.name}"></h3><br>
+        оцінка: <p th:text="${item.rating}"></p>
+        тип: <p th:text="${item.wine.type.toString().toLowerCase()}"></p>
+        ціна: <p th:text="${item.wine.price}"></p>
+        знижка: <p th:text="${item.wine.discount}"></p>
+        країна: <p th:text="${item.wine.land.name}"></p>
+        картинка: <img th:src="${item.wine.image}">
+    </div>
+</div>
 </body>
 </html>
