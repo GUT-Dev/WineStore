@@ -1,5 +1,7 @@
 package com.winestore.domain.entity.product;
 
+import com.winestore.enums.Sweetness;
+import com.winestore.enums.WineType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +38,30 @@ public class Wine implements Serializable {
     @ManyToOne
     @JoinColumn(name = "land_id")
     private Land land;
+
+    @Column(name = "region")
+    private String region;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
+
+    @Enumerated
+    @Column(name = "type")
+    private WineType type;
+
+    @Enumerated
+    @Column(name = "sweetness")
+    private Sweetness sweetness;
+
+    @Column(name = "strength")
+    private int strength;
+
+    @Column(name = "sugar_amount")
+    private Float sugarAmount;
+
+    @Column(name = "ean")
+    private String EAN;
 
     @Column(name = "image_url")
     private String image;

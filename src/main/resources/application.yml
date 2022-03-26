@@ -2,12 +2,10 @@ spring:
   profiles.active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/winestore?currentSchema=winestore
+    url: jdbc:postgresql://localhost:5432/winestore
   jpa:
     show-sql: true
     generate-ddl: false
     properties.hibernate:
-      default_schema: winestore
       dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: true
-

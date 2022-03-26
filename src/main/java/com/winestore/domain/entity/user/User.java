@@ -1,6 +1,6 @@
 package com.winestore.domain.entity.user;
 
-import com.winestore.domain.Role;
+import com.winestore.enums.Role;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
@@ -40,9 +40,6 @@ public class User implements Serializable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "api_key")
-    private String apiKey;
-
     @Column(name = "password")
     private String password;
 
@@ -53,9 +50,9 @@ public class User implements Serializable {
     private boolean baned;
 
     @Column(name = "ban_reason")
-    private boolean banReason;
+    private String banReason;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
 
