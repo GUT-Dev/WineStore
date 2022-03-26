@@ -58,7 +58,7 @@ public class Wine implements Serializable {
     private int strength;
 
     @Column(name = "sugar_amount")
-    private float sugarAmount;
+    private Float sugarAmount;
 
     @Column(name = "ean")
     private String EAN;

@@ -53,8 +53,8 @@ INSERT INTO address (post_code, land, city, street, home_number)
 VALUES ('87345', 'Україна', 'Чернівці', 'Головна', '13/8'),
        ('17544', 'Україна', 'Київ', 'Обїзна', '11/8 кв.6');
 
-INSERT INTO "user" (first_name, last_name, password, phone_number, email, enabled, baned, ban_reason, address_id,
-                    created_at)
+INSERT INTO users (first_name, last_name, password, phone_number, email, enabled, baned, ban_reason, address_id,
+                   created_at)
 VALUES ('admin', 'admin', 'admin', '+380950067602', 'admin@gmail.com', true, false, null, null, '2022-03-24 18:23:34'),
        ('general', 'manager', 'manager', '+380981167613', 'manager@gmail.com', true, false, null, 1,
         '2022-03-24 18:23:34'),

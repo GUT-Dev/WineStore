@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
@@ -50,9 +50,9 @@ public class User implements Serializable {
     private boolean baned;
 
     @Column(name = "ban_reason")
-    private boolean banReason;
+    private String banReason;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
 

@@ -8,7 +8,7 @@ CREATE TABLE address
     home_number varchar(16) NOT NULL
 );
 
-CREATE TABLE "user"
+CREATE TABLE users
 (
     id           bigserial                   NOT NULL PRIMARY KEY,
     first_name   varchar(32)                 NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE user_roles
 
     PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id)
-        REFERENCES "user" (id)
+        REFERENCES users (id)
 );
 
 CREATE TABLE land
@@ -93,7 +93,7 @@ CREATE TABLE cart
     available boolean NOT NULL default false,
 
     FOREIGN KEY (user_id)
-        REFERENCES "user" (id)
+        REFERENCES users (id)
 );
 
 CREATE TABLE cart_item

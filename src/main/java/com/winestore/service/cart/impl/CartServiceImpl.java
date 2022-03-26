@@ -30,7 +30,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Cart addToCurt(Long userId, Long wineId, int amount) {
-        Wine wine = wineService.getById(wineId);
+        Wine wine = wineService.getById(wineId).getWine();
 
         CartItem cartItem = new CartItem();
         cartItem.setWine(wine);
