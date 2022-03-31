@@ -19,7 +19,7 @@ public class Address implements Serializable {
     private static final long serialVersionUID = 2331275981375956264L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "post_code")

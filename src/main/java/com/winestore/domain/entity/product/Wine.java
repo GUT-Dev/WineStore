@@ -26,7 +26,7 @@ public class Wine implements Serializable {
     private static final long serialVersionUID = 9117659239522049469L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
@@ -35,14 +35,14 @@ public class Wine implements Serializable {
     @Column(name = "descriptions")
     private String descriptions;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "land_id")
     private Land land;
 
     @Column(name = "region")
     private String region;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
@@ -61,7 +61,7 @@ public class Wine implements Serializable {
     private Float sugarAmount;
 
     @Column(name = "ean")
-    private String EAN;
+    private String ean;
 
     @Column(name = "image_url")
     private String image;

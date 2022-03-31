@@ -54,22 +54,29 @@ VALUES ('87345', 'Україна', 'Чернівці', 'Головна', '13/8')
        ('17544', 'Україна', 'Київ', 'Обїзна', '11/8 кв.6');
 
 INSERT INTO users (first_name, last_name, password, phone_number, email, enabled, baned, ban_reason, address_id,
-                   created_at)
-VALUES ('admin', 'admin', 'admin', '+380950067602', 'admin@gmail.com', true, false, null, null, '2022-03-24 18:23:34'),
-       ('general', 'manager', 'manager', '+380981167613', 'manager@gmail.com', true, false, null, 1,
-        '2022-03-24 18:23:34'),
-       ('Валерій', 'лобода', 'Valera63', '+380661068442', 'valera.sloboda@gmail.com', true, false, null, 2,
-        '2022-03-24 18:23:34'),
-       ('Антон', 'Геращенко', '12anton54', '+3809512365501', 'anton78@gmail.com', true, false, null, null,
-        '2022-03-24 18:23:34'),
-       ('Ігор', 'Тополяк', 'test123', '+3809512111000', 'ihortopola@gmail.com', false, false, null, null,
-        '2022-03-24 18:23:34'),
-       ('Степан', 'Валерійчук', 'test123', '+3809511265511', 'stepan.val13@gmail.com', true, true,
-        'Мати в коментарях, фейкові замовлення', null, '2022-03-24 18:23:34');
+                   created_at, api_key)
+VALUES ('admin', 'admin', '$2a$10$WtKmWu9R.e1schV8NwPL8OrZoQt2dEi9tdokkuuAbNN37Jo5aE9dq', '+380950067602',
+        'admin@gmail.com', true, false, null, null,
+        '2022-03-24 18:23:34', 'admin'),
+       ('general', 'manager', '$2a$10$J2BKR6TI0sr2cBVkGhYQLuUA/yTFqbBi5bMo4yokQWyX.yAakxGVy', '+380981167613',
+        'manager@gmail.com', true, false, null, 1,
+        '2022-03-24 18:23:34', 'manager'),
+       ('Валерій', 'лобода', '$2a$10$YN0xiAvy60PXhiCMHHD.9eeE4actd5QJ/FqgpwhFnsNkZMesPR056', '+380661068442',
+        'valera.sloboda@gmail.com', true, false, null, 2,
+        '2022-03-24 18:23:34', 'valera'),
+       ('Антон', 'Геращенко', '$2a$10$5UVaue5reFplTvbvgNdcIel0D3g3ePuDzkp/TlvQl0BbW3KtzS7FK', '+3809512365501',
+        'anton78@gmail.com', true, false, null, null,
+        '2022-03-24 18:23:34', 'anton'),
+       ('Ігор', 'Тополяк', '$2a$10$XzCRb20EgFRj4EkS/V7Yw.8djy2ooqhUloz3PtTqUr0vBPwHZaf2q', '+3809512111000',
+        'ihortopola@gmail.com', false, false, null, null,
+        '2022-03-24 18:23:34', 'ihor'),
+       ('Степан', 'Валерійчук', '$2a$10$qz5/ZLQkQjkOM6u4LZKjfeRoKC2F/KCpmMOQE1hd.F8wDJVmbj.hu', '+3809511265511',
+        'stepan.val13@gmail.com', true, true,
+        'Мати в коментарях, фейкові замовлення', null, '2022-03-24 18:23:34', 'stepan');
 
-INSERT INTO user_roles (user_id, role_id)
-VALUES (1, 0),
-       (1, 1),
+INSERT INTO user_roles (user_id, role)
+VALUES (1, 1),
+       (1, 2),
        (2, 1);
 
 INSERT INTO customer_review (user_id, wine_id, message, rating, confirm)

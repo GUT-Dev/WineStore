@@ -21,7 +21,7 @@ public class Cart implements Serializable {
     private static final long serialVersionUID = -7659642770712016302L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "available")
