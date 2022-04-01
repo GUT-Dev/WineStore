@@ -11,9 +11,10 @@ CREATE TABLE address
 CREATE TABLE users
 (
     id           bigserial                   NOT NULL PRIMARY KEY,
+    api_key      varchar(64)                 NOT NULL UNIQUE,
     first_name   varchar(32)                 NOT NULL,
     last_name    varchar(32)                 NOT NULL,
-    password     varchar(32)                 NOT NULL,
+    password     varchar(64)                 NOT NULL,
     phone_number varchar(16),
     email        varchar(32)                 NOT NULL UNIQUE,
     enabled      boolean                     NOT NULL DEFAULT false,
@@ -26,12 +27,18 @@ CREATE TABLE users
         REFERENCES address (id)
 );
 
+CREATE TABLE roles
+(
+    id   bigserial   NOT NULL PRIMARY KEY,
+    name varchar(16) NOT NULL
+);
+
 CREATE TABLE user_roles
 (
-    user_id bigint NOT NULL,
-    role_id bigint NOT NULL,
+    user_id bigint   NOT NULL,
+    role    smallint NOT NULL,
 
-    PRIMARY KEY (user_id, role_id),
+    PRIMARY KEY (user_id, role),
     FOREIGN KEY (user_id)
         REFERENCES users (id)
 );
@@ -58,7 +65,7 @@ CREATE TABLE wine
     strength        float                       NOT NULL,
     sugar_amount    smallint,
     ean             varchar(32)                 NOT NULL,
-    image_url       varchar(64),
+    image_url       varchar(128),
     enable          boolean                     NOT NULL DEFAULT false,
     price           int,
     discount        smallint                    NOT NULL DEFAULT 0,

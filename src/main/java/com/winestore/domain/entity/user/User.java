@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -25,8 +26,11 @@ public class User implements Serializable {
     private static final long serialVersionUID = 2412547140467880311L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "api_key")
+    private String apiKey;
 
     @Column(name = "first_name")
     private String firstName;
@@ -65,4 +69,9 @@ public class User implements Serializable {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public String encodePassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
+    }
 }

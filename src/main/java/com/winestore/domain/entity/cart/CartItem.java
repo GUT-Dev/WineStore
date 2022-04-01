@@ -20,7 +20,7 @@ public class CartItem implements Serializable {
     private static final long serialVersionUID = 8712225284657742940L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

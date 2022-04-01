@@ -19,7 +19,7 @@ public class Land implements Serializable {
     private static final long serialVersionUID = 2339480821761076499L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name")
