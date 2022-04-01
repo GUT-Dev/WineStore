@@ -1,16 +1,20 @@
 package com.winestore.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-//це для того, щоб вказати що клас може бути використаний контейнером Spring IoC як конфігураційний клас для бінов.
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
-    //Допомагає з реєстрацією простих автоматизованих контролерів, попередньо налаштованих з кодом стану і / або поданням.
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // addViewController-  Зіставте URL-шлях або шаблон з контролером уявлення, щоб відобразити відповідь з налаштованим кодом стану і поданням.
-        registry.addViewController("/login").setViewName("login");
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                    .allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH");
+            }
+        };
     }
 }

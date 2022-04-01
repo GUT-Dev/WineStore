@@ -65,7 +65,7 @@ CREATE TABLE wine
     strength        float                       NOT NULL,
     sugar_amount    smallint,
     ean             varchar(32)                 NOT NULL,
-    image_url       varchar(64),
+    image_url       varchar(128),
     enable          boolean                     NOT NULL DEFAULT false,
     price           int,
     discount        smallint                    NOT NULL DEFAULT 0,

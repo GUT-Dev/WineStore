@@ -64,7 +64,7 @@ public class Wine implements Serializable {
     private String ean;
 
     @Column(name = "image_url")
-    private String image;
+    private String img;
 
     @Column(name = "enable")
     private boolean enable;

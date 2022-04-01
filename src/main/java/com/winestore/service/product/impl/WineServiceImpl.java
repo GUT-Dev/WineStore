@@ -20,9 +20,9 @@ public class WineServiceImpl implements WineService {
     private final WineRepository repository;
 
     @Override
-    public WineViewDTO getById(Long id) {
-        return countRating(repository.findById(id)
-            .orElseThrow(EntityNotFoundException::new));
+    public Wine getById(Long id) {
+        return repository.findById(id)
+            .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
@@ -44,9 +44,8 @@ public class WineServiceImpl implements WineService {
     }
 
     @Override
-    public Page<WineViewDTO> getPage(Pageable pageable) {
-        return repository.findAll(pageable)
-            .map(this::countRating);
+    public Page<Wine> getPage(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     private Wine map(Wine wine) {
