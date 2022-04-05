@@ -20,6 +20,10 @@ public interface WineMapper extends BaseMapper<Wine, WineDTO> {
     @Mapping(target = "price", qualifiedByName = "priceToBigDecimal")
     Wine toEntity(WineDTO dto);
 
+    @Override
+    @Mapping(target = "price", qualifiedByName = "priceToString")
+    WineDTO toDTO(Wine entity);
+
     @Named("priceToString")
     static String priceToString(BigDecimal price) {
         return price
