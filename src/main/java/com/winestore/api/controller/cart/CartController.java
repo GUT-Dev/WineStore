@@ -1,25 +1,32 @@
 package com.winestore.api.controller.cart;
 
+import com.winestore.api.dto.cart.CartItemDTO;
+import com.winestore.api.dto.cart.PutInCartDTO;
+import com.winestore.api.mapper.cart.CartItemMapper;
 import com.winestore.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import static com.winestore.service.user.impl.UserServiceImpl.getPrincipalId;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping("cart")
+@RestController
+@RequestMapping("/cart")
 @RequiredArgsConstructor
 public class CartController {
 
     private final CartService service;
+    private final CartItemMapper cartItemMapper;
 
     @GetMapping
-    public String getCart(Model model) {
-        model.addAttribute("cart", service.getCartForUser(getPrincipalId()));
+    public Set<CartItemDTO> getCart() {
+        return service.getCartItems().stream()
+            .map(cartItemMapper::toDTO)
+            .collect(Collectors.toSet());
+    }
 
-        return "cart";
+    @PutMapping
+    public void putInCart(@RequestBody PutInCartDTO dto) {
+        service.addToCurt(dto.getWineId(), dto.getAmount());
     }
 }

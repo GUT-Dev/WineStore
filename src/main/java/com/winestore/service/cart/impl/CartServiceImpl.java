@@ -29,7 +29,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Cart addToCurt(Long userId, Long wineId, int amount) {
+    public Cart addToCurt(Long wineId, int amount) {
         Wine wine = wineService.getById(wineId);
 
         CartItem cartItem = new CartItem();
@@ -37,7 +37,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setAmount(amount);
         CartItem entity = cartItemRepository.save(cartItem);
 
-        Cart cart = getCartForUser(userId);
+        Cart cart = getCart(getPrincipalId());
         Set<CartItem> cartItems = cart.getCartItems();
         cartItems.add(entity);
         cart.setCartItems(cartItems);
@@ -53,7 +53,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setAmount(amount);
         cartItemRepository.save(cartItem);
 
-        return getCartForUser(getPrincipalId());
+        return getCart(getPrincipalId());
     }
 
     @Override
@@ -61,13 +61,13 @@ public class CartServiceImpl implements CartService {
     public Cart removeFromCart(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
 
-        return getCartForUser(getPrincipalId());
+        return getCart(getPrincipalId());
     }
 
     @Override
     @Transactional
     public void buy(Long userId) {
-        Cart cart = getCartForUser(userId);
+        Cart cart = getCart(userId);
 
         Set<CartItem> cartItems = cart.getCartItems();
 
@@ -91,13 +91,17 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
+    public Set<CartItem> getCartItems() {
+        return getCart(getPrincipalId()).getCartItems();
+    }
+
+    @Override
     public List<Cart> getHistory(Long userId) {
         return cartRepository.getOrdersHistory(userId);
     }
 
-    @Override
-    @Transactional
-    public Cart getCartForUser(Long userId) {
+    private Cart getCart(Long userId) {
         return cartRepository.getAvailableCart(userId)
             .orElse(createCartForCurrentUser());
     }
