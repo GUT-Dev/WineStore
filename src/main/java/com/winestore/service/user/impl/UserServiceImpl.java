@@ -1,13 +1,17 @@
 package com.winestore.service.user.impl;
 
-import com.winestore.api.dto.user.UserAuthDTO;
+import com.winestore.api.dto.user.UserAuthRequest;
+import com.winestore.domain.entity.user.CustomUserDetails;
 import com.winestore.domain.entity.user.User;
 import com.winestore.domain.repository.user.UserRepository;
 import com.winestore.service.user.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,19 +19,22 @@ import javax.persistence.EntityNotFoundException;
 import java.security.InvalidParameterException;
 
 @Service
-@RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
-    public User findByApiKey(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByApiKey(username);
+    public CustomUserDetails findByEmail(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException(email);
         } else {
-            return user;
+            return CustomUserDetails.fromUserEntityToCustomUserDetails(user);
         }
     }
 
@@ -57,28 +64,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String auth(UserAuthDTO dto) {
+    public User findByAuthRequest(UserAuthRequest dto) {
         User user = userRepository.findByEmail(dto.getEmail());
 
         if (user == null) {
             throw new EntityNotFoundException("User with email " + dto.getEmail() + " not found");
-        } else if (!user.getPassword().equals(user.encodePassword(dto.getPassword()))) {
+        } else if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new InvalidParameterException("Password doesn't correct");
         } else if (!user.isEnabled()) {
             throw new AccessDeniedException("User is blocked");
         } else if (user.isBaned()) {
             throw new AccessDeniedException("User is baned with reason: " + user.getBanReason());
         } else {
-            return user.getApiKey();
+            return user;
         }
     }
 
-    public static User getPrincipal() {
+    @Override
+    public User getPrincipal() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return (User) principal;
+        CustomUserDetails customUserDetails = (CustomUserDetails) principal;
+        return userRepository.findByEmail(customUserDetails.getUsername());
     }
 
-    public static Long getPrincipalId() {
+    @Override
+    public Long getPrincipalId() {
         return getPrincipal().getId();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }

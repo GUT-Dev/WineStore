@@ -9,3 +9,9 @@ spring:
     properties.hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: true
+
+  main:
+    allow-circular-references: true
+jwt:
+  secret: "_]/G.*wg;s2_'u>7M*T96"
+

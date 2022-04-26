@@ -8,6 +8,7 @@ import com.winestore.domain.repository.cart.CartRepository;
 import com.winestore.exception.OverProductAmountException;
 import com.winestore.service.cart.CartService;
 import com.winestore.service.product.WineService;
+import com.winestore.service.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +17,6 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
-import static com.winestore.service.user.impl.UserServiceImpl.getPrincipal;
-import static com.winestore.service.user.impl.UserServiceImpl.getPrincipalId;
-
 @Service
 @AllArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -26,6 +24,7 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final WineService wineService;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -37,7 +36,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setAmount(amount);
         CartItem entity = cartItemRepository.save(cartItem);
 
-        Cart cart = getCart(getPrincipalId());
+        Cart cart = getCart(userService.getPrincipalId());
         Set<CartItem> cartItems = cart.getCartItems();
         cartItems.add(entity);
         cart.setCartItems(cartItems);
@@ -53,7 +52,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setAmount(amount);
         cartItemRepository.save(cartItem);
 
-        return getCart(getPrincipalId());
+        return getCart(userService.getPrincipalId());
     }
 
     @Override
@@ -61,7 +60,7 @@ public class CartServiceImpl implements CartService {
     public Cart removeFromCart(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
 
-        return getCart(getPrincipalId());
+        return getCart(userService.getPrincipalId());
     }
 
     @Override
@@ -93,7 +92,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Set<CartItem> getCartItems() {
-        return getCart(getPrincipalId()).getCartItems();
+        return getCart(userService.getPrincipalId()).getCartItems();
     }
 
     @Override
@@ -102,13 +101,17 @@ public class CartServiceImpl implements CartService {
     }
 
     private Cart getCart(Long userId) {
-        return cartRepository.getAvailableCart(userId)
-            .orElse(createCartForCurrentUser());
+        List<Cart> carts = cartRepository.getAvailableCart(userId);
+        if (carts.isEmpty()) {
+            return createCartForCurrentUser();
+        } else {
+            return carts.get(0);
+        }
     }
 
     private Cart createCartForCurrentUser() {
         Cart cart = new Cart();
-        cart.setUser(getPrincipal());
+        cart.setUser(userService.getPrincipal());
         cart.setAvailable(true);
 
         return cartRepository.save(cart);

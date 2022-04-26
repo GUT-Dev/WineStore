@@ -1,8 +1,9 @@
 package com.winestore.api.controller.user;
 
-import com.winestore.api.dto.user.UserAuthDTO;
+import com.winestore.api.dto.user.UserAuthRequest;
 import com.winestore.api.dto.user.UserRegistrationDTO;
 import com.winestore.api.mapper.user.UserMapper;
+import com.winestore.config.auth.JwtProvider;
 import com.winestore.domain.entity.user.User;
 import com.winestore.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ public class AuthController {
 
     private final UserService service;
     private final UserMapper mapper;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/registration")
     public String registration(@RequestBody UserRegistrationDTO dto) {
@@ -24,7 +26,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth")
-    public String getForm(@RequestBody UserAuthDTO dto) {
-        return service.auth(dto);
+    public String getForm(@RequestBody UserAuthRequest dto) {
+        User user = service.findByAuthRequest(dto);
+        return jwtProvider.generateToken(user.getEmail());
     }
 }

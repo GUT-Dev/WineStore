@@ -1,16 +1,21 @@
 package com.winestore.service.user;
 
-import com.winestore.api.dto.user.UserAuthDTO;
+import com.winestore.api.dto.user.UserAuthRequest;
+import com.winestore.domain.entity.user.CustomUserDetails;
 import com.winestore.domain.entity.user.User;
 
 public interface UserService {
-    User findByApiKey(String username);
-    
+    CustomUserDetails findByEmail(String email);
+
     User getById(Long id);
 
     User update(User user);
 
     User registration(User user);
 
-    String auth(UserAuthDTO dto);
+    User findByAuthRequest(UserAuthRequest dto);
+
+    User getPrincipal();
+
+    Long getPrincipalId();
 }
