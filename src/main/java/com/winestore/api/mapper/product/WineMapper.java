@@ -13,19 +13,22 @@ import java.math.RoundingMode;
 
 @Mapper
 public interface WineMapper extends BaseMapper<Wine, WineDTO> {
-    @Mapping(target = "price", qualifiedByName = "priceToString")
-    WineListDTO toListDTO(Wine entity);
 
     @Override
     @Mapping(target = "price", qualifiedByName = "priceToBigDecimal")
     Wine toEntity(WineDTO dto);
 
+    @Mapping(target = "price", qualifiedByName = "convertPrice")
+    @Mapping(target = "priceWithSale", qualifiedByName = "convertPrice")
+    WineListDTO toListDTO(Wine entity);
+
     @Override
-    @Mapping(target = "price", qualifiedByName = "priceToString")
+    @Mapping(target = "price", qualifiedByName = "convertPrice")
+    @Mapping(target = "priceWithSale", qualifiedByName = "convertPrice")
     WineDTO toDTO(Wine entity);
 
-    @Named("priceToString")
-    static String priceToString(BigDecimal price) {
+    @Named("convertPrice")
+    static String convertPrice(BigDecimal price) {
         return price
             .movePointLeft(2)
             .toPlainString();

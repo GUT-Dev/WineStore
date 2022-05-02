@@ -31,9 +31,7 @@ public class Cart implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(name = "cart__cart_item",
-        joinColumns = @JoinColumn(name = "cart_id"),
-        inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+    @JoinColumn(name = "cart_id")
     private Set<CartItem> cartItems;
 }

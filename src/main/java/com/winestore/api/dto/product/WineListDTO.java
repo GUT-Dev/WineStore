@@ -11,6 +11,6 @@ public class WineListDTO {
     private String img;
     private String price;
     private String priceWithSale;
-    private int sale;
+    private int discount;
     private boolean enable;
 }

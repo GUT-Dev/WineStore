@@ -28,4 +28,8 @@ public class CartItem implements Serializable {
     private Wine wine;
 
     private int amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
 }

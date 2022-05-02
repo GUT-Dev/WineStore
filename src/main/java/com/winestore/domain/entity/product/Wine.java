@@ -84,4 +84,16 @@ public class Wine implements Serializable {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Transient
+    private BigDecimal priceWithSale;
+
+    @PostLoad
+    private void countPriceWithSale() {
+        if (discount != 0) {
+            priceWithSale = BigDecimal.valueOf(price.longValue() - (price.longValue() * discount / 100));
+        } else {
+            priceWithSale = price;
+        }
+    }
 }
