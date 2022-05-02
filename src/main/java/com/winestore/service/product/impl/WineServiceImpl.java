@@ -1,12 +1,15 @@
 package com.winestore.service.product.impl;
 
+import com.winestore.api.dto.filters.WineSearchFilter;
 import com.winestore.domain.dto.WineViewDTO;
 import com.winestore.domain.entity.product.Wine;
 import com.winestore.domain.repository.product.WineRepository;
+import com.winestore.domain.specification.WineSpecBuilder;
 import com.winestore.service.product.WineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -44,8 +47,8 @@ public class WineServiceImpl implements WineService {
     }
 
     @Override
-    public Page<Wine> getPage(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<Wine> getPage(WineSearchFilter filter, Pageable pageable) {
+        return repository.findAll(getSpecification(filter), pageable);
     }
 
     private Wine map(Wine wine) {
@@ -59,10 +62,19 @@ public class WineServiceImpl implements WineService {
         rating = rating != null
             ? rating.setScale(2, RoundingMode.HALF_EVEN)
             : new BigDecimal("0");
-        
+
         wineViewDTO.setWine(map(wine));
         wineViewDTO.setRating(rating.doubleValue());
 
         return wineViewDTO;
+    }
+
+    private Specification<Wine> getSpecification(WineSearchFilter filter) {
+        WineSpecBuilder builder = new WineSpecBuilder();
+
+        builder.hasSweetness(filter.getSweetness());
+        builder.hasTypes(filter.getType());
+
+        return builder.build();
     }
 }

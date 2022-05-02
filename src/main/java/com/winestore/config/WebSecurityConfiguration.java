@@ -60,7 +60,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
 //            .antMatchers("/css/**", "/registration/", "/images/**").permitAll()
 //            .antMatchers("/admin/**").hasAuthority("ADMIN")
-            .antMatchers("/cart/**").hasAnyAuthority(Role.CUSTOMER.name(), Role.MANAGER.name(), Role.ADMIN.name())
+            .antMatchers("/cart/**", "/review/add").hasAnyAuthority(Role.CUSTOMER.name(), Role.MANAGER.name(), Role.ADMIN.name())
             .antMatchers("/**").permitAll()
             .anyRequest().permitAll()
             .and()

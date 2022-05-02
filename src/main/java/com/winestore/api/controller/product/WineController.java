@@ -1,5 +1,6 @@
 package com.winestore.api.controller.product;
 
+import com.winestore.api.dto.filters.WineSearchFilter;
 import com.winestore.api.dto.product.WineDTO;
 import com.winestore.api.dto.product.WineListDTO;
 import com.winestore.api.mapper.product.WineMapper;
@@ -27,8 +28,8 @@ public class WineController {
     }
 
     @GetMapping
-    public List<WineListDTO> getPage(Pageable pageable) {
-        return service.getPage(pageable).stream()
+    public List<WineListDTO> getPage(WineSearchFilter filter, Pageable pageable) {
+        return service.getPage(filter, pageable).stream()
             .map(mapper::toListDTO)
             .toList();
     }

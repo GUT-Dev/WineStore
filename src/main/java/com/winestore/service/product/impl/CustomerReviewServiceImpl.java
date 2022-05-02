@@ -4,6 +4,7 @@ import com.winestore.domain.entity.product.CustomerReview;
 import com.winestore.domain.entity.product.UserWinePK;
 import com.winestore.domain.repository.product.CustomerReviewRepository;
 import com.winestore.service.product.CustomerReviewService;
+import com.winestore.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class CustomerReviewServiceImpl implements CustomerReviewService {
 
     private final CustomerReviewRepository repository;
+    private final UserService userService;
 
     public CustomerReview getById(UserWinePK id) {
         return repository.findById(id)
@@ -23,6 +25,11 @@ public class CustomerReviewServiceImpl implements CustomerReviewService {
 
     @Override
     public CustomerReview create(CustomerReview customerReview) {
+        UserWinePK key = customerReview.getId();
+        key.setUser(userService.getPrincipal());
+
+        customerReview.setConfirm(true);
+        customerReview.setId(key);
         return repository.save(customerReview);
     }
 

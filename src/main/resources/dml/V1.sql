@@ -85,20 +85,11 @@ CREATE TABLE cart_item
 (
     id      bigserial NOT NULL PRIMARY KEY,
     wine_id bigint    NOT NULL,
+    cart_id bigint    not null,
     amount  smallint  NOT NULL default 1,
 
     FOREIGN KEY (wine_id)
-        REFERENCES wine (id)
-);
-
-CREATE TABLE cart__cart_item
-(
-    cart_id      bigint not null,
-    cart_item_id bigint not null,
-
-    PRIMARY KEY (cart_id, cart_item_id),
+        REFERENCES wine (id),
     FOREIGN KEY (cart_id)
-        REFERENCES cart (id),
-    FOREIGN KEY (cart_item_id)
-        REFERENCES cart_item (id)
+        REFERENCES cart (id)
 );
