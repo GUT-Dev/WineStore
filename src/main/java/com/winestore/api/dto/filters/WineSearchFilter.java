@@ -12,4 +12,5 @@ public class WineSearchFilter {
     private final Integer maxPrice;
     private final List<String> type;
     private final List<String> sweetness;
+    private final String name;
 }

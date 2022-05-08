@@ -15,7 +15,8 @@ public class MvcConfig implements WebMvcConfigurer {
                 registry.addMapping("/**")
                     .allowedMethods("*")
                     .allowedHeaders("Authorization", "Content-Type")
-                    .allowedOrigins("http://localhost:3000");
+                    .allowedOrigins("http://localhost:3000")
+                    .allowedOrigins("http://localhost:3001");
             }
         };
     }

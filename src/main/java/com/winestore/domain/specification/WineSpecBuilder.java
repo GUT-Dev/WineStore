@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,8 +17,11 @@ public class WineSpecBuilder {
 
     private final List<Specification<Wine>> specifications = new ArrayList<>();
 
-    public WineSpecBuilder hasPrice() {
-        return this;
+    public void hasPrice(Integer min, Integer max) {
+        if (min != null && max != null) {
+            specifications.add((root, query, criteriaBuilder) ->
+                criteriaBuilder.between(root.get("price"), min, max));
+        }
     }
 
     public void hasTypes(List<String> types) {
@@ -39,6 +43,15 @@ public class WineSpecBuilder {
 
             specifications.add((root, query, cb) ->
                 root.get("sweetness").in(sweetnessOrdinals));
+        }
+    }
+
+    public void hasName(String name) {
+        if (name != null) {
+            specifications.add((root, query, criteriaBuilder) ->
+                criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("name")),
+                    '%' + name.toLowerCase(Locale.ROOT) + '%'));
         }
     }
 
