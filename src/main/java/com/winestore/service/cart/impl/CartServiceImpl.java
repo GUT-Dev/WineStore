@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -146,6 +147,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = new Cart();
         cart.setUser(userService.getPrincipal());
         cart.setAvailable(true);
+        cart.setCartItems(Collections.emptySet());
 
         return cartRepository.save(cart);
     }

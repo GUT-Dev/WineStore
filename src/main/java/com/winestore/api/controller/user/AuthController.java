@@ -24,7 +24,7 @@ public class AuthController {
     @PostMapping("/registration")
     public String registration(@RequestBody UserRegistrationDTO dto) {
         User user = service.registration(mapper.toEntity(dto));
-        return user.getApiKey();
+        return jwtProvider.generateToken(user.getEmail());
     }
 
     @PostMapping("/auth")

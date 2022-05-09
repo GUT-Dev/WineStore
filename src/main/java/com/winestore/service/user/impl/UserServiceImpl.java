@@ -4,6 +4,7 @@ import com.winestore.api.dto.user.UserAuthRequest;
 import com.winestore.domain.entity.user.CustomUserDetails;
 import com.winestore.domain.entity.user.User;
 import com.winestore.domain.repository.user.UserRepository;
+import com.winestore.enums.Role;
 import com.winestore.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,9 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.InvalidParameterException;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
+
+    private static final Set<Role> defaultRole = Set.of(Role.CUSTOMER);
 
     @Autowired
     private UserRepository userRepository;
@@ -57,8 +61,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User registration(User user) {
         user.setEnabled(true);
-        user.setPassword(user.encodePassword(user.getPassword()));
-        user.setApiKey(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(defaultRole);
 
         return userRepository.save(user);
     }
@@ -69,7 +73,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         if (user == null) {
             throw new EntityNotFoundException("User with email " + dto.getEmail() + " not found");
-        } else if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        } else if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new InvalidParameterException("Password doesn't correct");
         } else if (!user.isEnabled()) {
             throw new AccessDeniedException("User is blocked");
