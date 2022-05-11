@@ -66,7 +66,7 @@ CREATE TABLE wine
     sugar_amount    smallint,
     ean             varchar(32)                 NOT NULL,
     image_url       varchar(128),
-    enable          boolean                     NOT NULL DEFAULT false,
+    available       boolean                     NOT NULL DEFAULT false,
     price           int,
     discount        smallint                    NOT NULL DEFAULT 0,
     amount_for_sale int                         NOT NULL DEFAULT 0,
@@ -95,9 +95,9 @@ CREATE TABLE customer_review
 
 CREATE TABLE cart
 (
-    id      bigserial NOT NULL PRIMARY KEY,
-    user_id bigint    NOT NULL,
-    available boolean NOT NULL default false,
+    id        bigserial NOT NULL PRIMARY KEY,
+    user_id   bigint    NOT NULL,
+    available boolean   NOT NULL default false,
 
     FOREIGN KEY (user_id)
         REFERENCES users (id)
@@ -105,22 +105,14 @@ CREATE TABLE cart
 
 CREATE TABLE cart_item
 (
-    id      bigserial NOT NULL PRIMARY KEY,
-    wine_id bigint    NOT NULL,
-    amount  smallint  NOT NULL default 1,
+    id        bigserial NOT NULL PRIMARY KEY,
+    wine_id   bigint    NOT NULL,
+    cart_id   bigint    NOT NULL,
+    amount    smallint  NOT NULL default 1,
+    available boolean   NOT NULL default true,
 
     FOREIGN KEY (wine_id)
-        REFERENCES wine (id)
-);
-
-CREATE TABLE cart__cart_item
-(
-    cart_id      bigint not null,
-    cart_item_id bigint not null,
-
-    PRIMARY KEY (cart_id, cart_item_id),
+        REFERENCES wine (id),
     FOREIGN KEY (cart_id)
-        REFERENCES cart (id),
-    FOREIGN KEY (cart_item_id)
-        REFERENCES cart_item (id)
+        REFERENCES cart (id)
 );

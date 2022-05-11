@@ -55,6 +55,13 @@ public class WineSpecBuilder {
         }
     }
 
+    public void hasDiscount(Boolean hasDiscount) {
+        if (hasDiscount != null) {
+            specifications.add((root, query, cb) ->
+                cb.notEqual(root.get("discount"), 0));
+        }
+    }
+
     public Specification<Wine> build() {
         if (specifications.isEmpty()) {
             return null;

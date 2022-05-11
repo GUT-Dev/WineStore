@@ -38,6 +38,13 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void addToCurt(Long wineId, int amount) {
         Wine wine = wineService.getById(wineId);
+
+        if (wine.getSoldAmount() + amount > wine.getAmountForSale()) {
+            throw new OverProductAmountException("The wine with id " + wine.getId()
+                + " has just " + (wine.getAmountForSale() - wine.getSoldAmount()) +
+                " pcs instead of " + amount);
+        }
+
         Cart cart = getCart(userService.getPrincipalId());
 
         CartItem cartItem = cartItemRepository.getByWineAndCart(wine, cart);
@@ -59,6 +66,13 @@ public class CartServiceImpl implements CartService {
     public Cart changeAmount(Long cartItemId, int amount) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
             .orElseThrow(EntityNotFoundException::new);
+        Wine wine = cartItem.getWine();
+
+        if (wine.getSoldAmount() + amount > wine.getAmountForSale()) {
+            throw new OverProductAmountException("The wine with id " + wine.getId()
+                + " has just " + (wine.getAmountForSale() - wine.getSoldAmount()) +
+                " pcs instead of " + amount);
+        }
 
         cartItem.setAmount(amount);
         cartItemRepository.save(cartItem);
@@ -74,8 +88,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void buy(Long userId) {
-        Cart cart = getCart(userId);
+    public void buy() {
+        Cart cart = getCart(userService.getPrincipalId());
 
         Set<CartItem> cartItems = cart.getCartItems();
 
@@ -107,14 +121,17 @@ public class CartServiceImpl implements CartService {
         int totalSalePercent = 0;
 
         Set<CartItemDTO> items = getCart(userService.getPrincipalId()).getCartItems().stream()
+            .map(this::updateCartItem)
             .map(cartItemMapper::toDTO)
             .collect(Collectors.toSet());
 
         for (CartItemDTO item : items) {
-            WineListDTO wine = item.getWine();
+            if (item.isAvailable()) {
+                WineListDTO wine = item.getWine();
 
-            totalPrice += new BigDecimal(wine.getPrice()).unscaledValue().intValue() * item.getAmount();
-            totalPriceWithSale += new BigDecimal(wine.getPriceWithSale()).unscaledValue().intValue() * item.getAmount();
+                totalPrice += new BigDecimal(wine.getPrice()).unscaledValue().intValue() * item.getAmount();
+                totalPriceWithSale += new BigDecimal(wine.getPriceWithSale()).unscaledValue().intValue() * item.getAmount();
+            }
         }
 
         if (totalPrice != totalPriceWithSale) {
@@ -150,5 +167,11 @@ public class CartServiceImpl implements CartService {
         cart.setCartItems(Collections.emptySet());
 
         return cartRepository.save(cart);
+    }
+
+    private CartItem updateCartItem(CartItem cartItem) {
+        Wine wine = cartItem.getWine();
+        cartItem.setAvailable(wine.getAmountForSale() > wine.getSoldAmount());
+        return cartItemRepository.save(cartItem);
     }
 }

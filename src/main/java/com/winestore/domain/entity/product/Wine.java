@@ -66,8 +66,8 @@ public class Wine implements Serializable {
     @Column(name = "image_url")
     private String img;
 
-    @Column(name = "enable")
-    private boolean enable;
+    @Column(name = "available")
+    private boolean available;
 
     @Column(name = "price")
     private BigDecimal price;

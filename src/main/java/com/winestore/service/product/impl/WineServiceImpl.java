@@ -76,6 +76,7 @@ public class WineServiceImpl implements WineService {
         builder.hasTypes(filter.getType());
         builder.hasPrice(filter.getMinPrice() * 100, filter.getMaxPrice() * 100);
         builder.hasName(filter.getName());
+        builder.hasDiscount(filter.getHasDiscount());
 
         return builder.build();
     }

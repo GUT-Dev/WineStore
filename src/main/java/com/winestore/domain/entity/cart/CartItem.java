@@ -27,7 +27,11 @@ public class CartItem implements Serializable {
     @JoinColumn(name = "wine_id")
     private Wine wine;
 
+    @Column(name = "amount")
     private int amount;
+
+    @Column(name = "available")
+    private boolean available;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)

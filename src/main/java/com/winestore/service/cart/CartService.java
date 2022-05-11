@@ -13,7 +13,7 @@ public interface CartService {
 
     void removeFromCart(Long cartItemId);
 
-    void buy(Long cartId);
+    void buy();
 
     UserCartDTO getCart();
 

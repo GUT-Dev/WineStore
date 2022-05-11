@@ -27,4 +27,9 @@ public class CartController {
     public void deleteFromCart(@PathVariable Long id) {
         service.removeFromCart(id);
     }
+
+    @PutMapping("/buy")
+    public void buy() {
+        service.buy();
+    }
 }
