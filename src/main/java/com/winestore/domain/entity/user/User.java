@@ -52,7 +52,7 @@ public class User implements Serializable {
     @Column(name = "ban_reason")
     private String banReason;
 
-    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     private Address address;
 

@@ -24,13 +24,16 @@ public class WineController {
 
     @GetMapping("/{id}")
     public WineDTO getWine(@PathVariable(name = "id") Long id) {
-        return mapper.toDTO(service.getById(id));
+        WineDTO dto = mapper.toDTO(service.getById(id));
+        dto.setRating(service.countRating(dto.getId()));
+        return dto;
     }
 
     @GetMapping
     public List<WineListDTO> getPage(WineSearchFilter filter, Pageable pageable) {
         return service.getPage(filter, pageable).stream()
             .map(mapper::toListDTO)
+            .peek(i -> i.setRating(service.countRating(i.getId())))
             .toList();
     }
 }

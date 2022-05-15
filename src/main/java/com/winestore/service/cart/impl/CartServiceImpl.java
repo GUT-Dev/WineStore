@@ -1,14 +1,15 @@
 package com.winestore.service.cart.impl;
 
-import com.winestore.api.dto.cart.CartItemDTO;
-import com.winestore.api.dto.cart.UserCartDTO;
+import com.winestore.api.dto.cart.*;
 import com.winestore.api.dto.product.WineListDTO;
 import com.winestore.api.mapper.cart.CartItemMapper;
+import com.winestore.api.mapper.user.UserMapper;
 import com.winestore.domain.entity.cart.Cart;
 import com.winestore.domain.entity.cart.CartItem;
 import com.winestore.domain.entity.product.Wine;
 import com.winestore.domain.repository.cart.CartItemRepository;
 import com.winestore.domain.repository.cart.CartRepository;
+import com.winestore.enums.TrackingStatus;
 import com.winestore.exception.OverProductAmountException;
 import com.winestore.service.cart.CartService;
 import com.winestore.service.product.WineService;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +36,7 @@ public class CartServiceImpl implements CartService {
     private final WineService wineService;
     private final UserService userService;
     private final CartItemMapper cartItemMapper;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
@@ -82,6 +86,18 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
+    public TrackingStatus changeStatus(ChangeStatusDTO dto) {
+        TrackingStatus status = TrackingStatus.valueOf(dto.getStatus());
+
+        Cart cart = cartRepository.getById(dto.getCartId());
+        cart.setTrackingStatus(status);
+
+        cart = cartRepository.save(cart);
+        return cart.getTrackingStatus();
+    }
+
+    @Override
+    @Transactional
     public void removeFromCart(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);
     }
@@ -94,28 +110,33 @@ public class CartServiceImpl implements CartService {
         Set<CartItem> cartItems = cart.getCartItems();
 
         cartItems.forEach(item -> {
-            Wine wine = item.getWine();
-            int amount = wine.getAmountForSale() - wine.getSoldAmount();
+            if (item.isAvailable()) {
+                Wine wine = item.getWine();
+                int amount = wine.getAmountForSale() - wine.getSoldAmount();
 
-            if (item.getAmount() < amount) {
-                wine.setSoldAmount(wine.getSoldAmount() + item.getAmount());
+                if (item.getAmount() < amount) {
+                    wine.setSoldAmount(wine.getSoldAmount() + item.getAmount());
+                } else {
+                    throw new OverProductAmountException("The wine with id " + wine.getId()
+                        + " has just " + amount +
+                        " pcs instead of " + item.getAmount());
+                }
+
+                wineService.update(wine);
             } else {
-                throw new OverProductAmountException("The wine with id " + wine.getId()
-                    + " has just " + amount +
-                    " pcs instead of " + item.getAmount());
+                cartItemRepository.delete(item);
             }
-
-            wineService.update(wine);
         });
 
         cart.setAvailable(false);
+        cart.setBuyDate(LocalDateTime.now());
+        cart.setTrackingStatus(TrackingStatus.NEW);
         cartRepository.save(cart);
     }
 
     @Override
     @Transactional
     public UserCartDTO getCart() {
-        UserCartDTO.UserCartDTOBuilder cart = UserCartDTO.builder();
         int totalPrice = 0;
         int totalPriceWithSale = 0;
         int totalSalePercent = 0;
@@ -138,7 +159,7 @@ public class CartServiceImpl implements CartService {
             totalSalePercent = 100 - (100 * totalPriceWithSale / totalPrice);
         }
 
-        return cart
+        return UserCartDTO.builder()
             .items(items)
             .totalPrice(BigDecimal.valueOf(totalPrice).movePointLeft(2).toPlainString())
             .totalPriceWithSale(BigDecimal.valueOf(totalPriceWithSale).movePointLeft(2).toPlainString())
@@ -147,8 +168,90 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<Cart> getHistory(Long userId) {
-        return cartRepository.getOrdersHistory(userId);
+    @Transactional
+    public List<CartHistoryDTO> getHistory() {
+        List<Cart> carts = cartRepository.getOrdersHistory(userService.getPrincipalId());
+
+        List<CartHistoryDTO> result = new ArrayList<>();
+
+        for (Cart cart : carts) {
+            int totalPrice = 0;
+            int totalPriceWithSale = 0;
+            int totalSalePercent = 0;
+
+            Set<CartItemDTO> items = cart.getCartItems().stream()
+                .map(cartItemMapper::toDTO)
+                .collect(Collectors.toSet());
+
+            for (CartItemDTO item : items) {
+                WineListDTO wine = item.getWine();
+
+                totalPrice += new BigDecimal(wine.getPrice()).unscaledValue().intValue() * item.getAmount();
+                totalPriceWithSale += new BigDecimal(wine.getPriceWithSale()).unscaledValue().intValue() * item.getAmount();
+            }
+
+            if (totalPrice != totalPriceWithSale) {
+                totalSalePercent = 100 - (100 * totalPriceWithSale / totalPrice);
+            }
+
+            result.add(
+                CartHistoryDTO.builder()
+                    .id(cart.getId())
+                    .trackingStatus(cart.getTrackingStatus())
+                    .buyDate(cart.getBuyDate())
+                    .items(items)
+                    .totalPrice(BigDecimal.valueOf(totalPrice).movePointLeft(2).toPlainString())
+                    .totalPriceWithSale(BigDecimal.valueOf(totalPriceWithSale).movePointLeft(2).toPlainString())
+                    .totalSalePercent(totalSalePercent)
+                    .build()
+            );
+        }
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public List<CartTrackingDTO> getOrders() {
+        List<Cart> carts = cartRepository.findAllByAvailableFalseOrderByTrackingStatus();
+
+        List<CartTrackingDTO> result = new ArrayList<>();
+
+        for (Cart cart : carts) {
+            int totalPrice = 0;
+            int totalPriceWithSale = 0;
+            int totalSalePercent = 0;
+
+            Set<CartItemDTO> items = cart.getCartItems().stream()
+                .map(cartItemMapper::toDTO)
+                .collect(Collectors.toSet());
+
+            for (CartItemDTO item : items) {
+                WineListDTO wine = item.getWine();
+
+                totalPrice += new BigDecimal(wine.getPrice()).unscaledValue().intValue() * item.getAmount();
+                totalPriceWithSale += new BigDecimal(wine.getPriceWithSale()).unscaledValue().intValue() * item.getAmount();
+            }
+
+            if (totalPrice != totalPriceWithSale) {
+                totalSalePercent = 100 - (100 * totalPriceWithSale / totalPrice);
+            }
+
+            result.add(
+                CartTrackingDTO.builder()
+                    .id(cart.getId())
+                    .trackingStatus(cart.getTrackingStatus())
+                    .buyDate(cart.getBuyDate())
+                    .items(items)
+                    .totalPrice(BigDecimal.valueOf(totalPrice).movePointLeft(2).toPlainString())
+                    .totalPriceWithSale(BigDecimal.valueOf(totalPriceWithSale).movePointLeft(2).toPlainString())
+                    .totalSalePercent(totalSalePercent)
+                    .user(userMapper.toDTO(cart.getUser()))
+                    .build()
+            );
+        }
+
+        return result;
     }
 
     private Cart getCart(Long userId) {

@@ -11,4 +11,5 @@ public interface WineService extends BaseService<Wine> {
 
     Page<Wine> getPage(WineSearchFilter filter, Pageable pageable);
 
+    int countRating(Long wineId);
 }

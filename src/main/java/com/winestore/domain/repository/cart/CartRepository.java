@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface CartRepository extends CrudRepository<Cart, Long> {
 
+    Cart getById(Long id);
+
     @Query(value = "select c from Cart c " +
         "where c.available = true " +
         "and c.user.id = :userId ")
@@ -17,6 +19,9 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
 
     @Query(value = "select c from Cart c " +
         "where c.available = false " +
-        "and c.user.id = :userId ")
+        "and c.user.id = :userId " +
+        "order by c.buyDate desc ")
     List<Cart> getOrdersHistory(Long userId);
+
+    List<Cart> findAllByAvailableFalseOrderByTrackingStatus();
 }

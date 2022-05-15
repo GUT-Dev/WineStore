@@ -7,7 +7,7 @@ import com.winestore.api.mapper.BaseMapper;
 import com.winestore.domain.entity.user.User;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(uses = {AddressMapper.class})
 public interface UserMapper extends BaseMapper<User, UserDTO> {
     UserBaseDTO toBaseDTO(User user);
 

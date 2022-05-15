@@ -1,10 +1,13 @@
 package com.winestore.api.controller.cart;
 
+import com.winestore.api.dto.cart.CartHistoryDTO;
 import com.winestore.api.dto.cart.PutInCartDTO;
 import com.winestore.api.dto.cart.UserCartDTO;
 import com.winestore.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/cart")
@@ -31,5 +34,10 @@ public class CartController {
     @PutMapping("/buy")
     public void buy() {
         service.buy();
+    }
+
+    @GetMapping("/history")
+    public List<CartHistoryDTO> getHistory() {
+        return service.getHistory();
     }
 }

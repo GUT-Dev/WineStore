@@ -95,9 +95,11 @@ CREATE TABLE customer_review
 
 CREATE TABLE cart
 (
-    id        bigserial NOT NULL PRIMARY KEY,
-    user_id   bigint    NOT NULL,
-    available boolean   NOT NULL default false,
+    id              bigserial NOT NULL PRIMARY KEY,
+    user_id         bigint    NOT NULL,
+    available       boolean   NOT NULL default false,
+    buy_date        timestamp          default NULL,
+    tracking_status int                default NULL,
 
     FOREIGN KEY (user_id)
         REFERENCES users (id)

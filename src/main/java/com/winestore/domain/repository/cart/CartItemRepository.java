@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CartItemRepository extends CrudRepository<CartItem, Long> {
-
     CartItem getByWineAndCart(Wine wine, Cart cart);
 }

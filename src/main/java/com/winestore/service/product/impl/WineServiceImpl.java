@@ -1,7 +1,6 @@
 package com.winestore.service.product.impl;
 
 import com.winestore.api.dto.filters.WineSearchFilter;
-import com.winestore.domain.dto.WineViewDTO;
 import com.winestore.domain.entity.product.Wine;
 import com.winestore.domain.repository.product.WineRepository;
 import com.winestore.domain.specification.WineSpecBuilder;
@@ -13,8 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,22 +49,9 @@ public class WineServiceImpl implements WineService {
         return repository.findAll(getSpecification(filter), pageable);
     }
 
-    private Wine map(Wine wine) {
-        wine.setPrice(wine.getPrice().movePointLeft(2));
-        return wine;
-    }
-
-    private WineViewDTO countRating(Wine wine) {
-        WineViewDTO wineViewDTO = new WineViewDTO();
-        BigDecimal rating = repository.countRating(wine.getId());
-        rating = rating != null
-            ? rating.setScale(2, RoundingMode.HALF_EVEN)
-            : new BigDecimal("0");
-
-        wineViewDTO.setWine(map(wine));
-        wineViewDTO.setRating(rating.doubleValue());
-
-        return wineViewDTO;
+    @Override
+    public int countRating(Long wineId) {
+        return Optional.ofNullable(repository.countRating(wineId)).orElse(0);
     }
 
     private Specification<Wine> getSpecification(WineSearchFilter filter) {
