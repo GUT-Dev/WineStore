@@ -96,6 +96,9 @@ public class Wine implements Serializable {
     @Transient
     private BigDecimal priceWithSale;
 
+    @Transient
+    private int rating;
+
     @PostLoad
     @PostPersist
     private void countPriceWithSale() {

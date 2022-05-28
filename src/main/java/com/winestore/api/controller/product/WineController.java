@@ -1,8 +1,6 @@
 package com.winestore.api.controller.product;
 
 import com.winestore.api.dto.filters.WineSearchFilter;
-import com.winestore.api.dto.product.BrandDTO;
-import com.winestore.api.dto.product.LandDTO;
 import com.winestore.api.dto.product.WineDTO;
 import com.winestore.api.dto.product.WineListDTO;
 import com.winestore.api.mapper.product.BrandMapper;
@@ -16,6 +14,7 @@ import com.winestore.service.product.BrandService;
 import com.winestore.service.product.LandService;
 import com.winestore.service.product.WineService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,11 +41,9 @@ public class WineController {
     }
 
     @GetMapping
-    public List<WineListDTO> getPage(WineSearchFilter filter, Pageable pageable) {
-        return wineService.getPage(filter, pageable).stream()
-            .map(wineMapper::toListDTO)
-            .peek(i -> i.setRating(wineService.countRating(i.getId())))
-            .toList();
+    public Page<WineListDTO> getPage(WineSearchFilter filter, Pageable pageable) {
+        return wineService.getPage(filter, pageable)
+            .map(wineMapper::toListDTO);
     }
 
     @PostMapping
@@ -69,20 +66,22 @@ public class WineController {
             .toList();
     }
 
-    @GetMapping("/lands")
-    public List<LandDTO> getLands() {
-        return landService.getAll().stream()
-            .map(landMapper::toDTO)
-            .toList();
+    @GetMapping("/max-price")
+    public String getMaxPrice() {
+        return wineService.getMaxPrice()
+            .movePointLeft(2)
+            .setScale(0)
+            .toString();
     }
 
-    @GetMapping("/brands")
-    public List<BrandDTO> getAll() {
-        return brandService.getAll().stream()
-            .map(brandMapper::toDTO)
-            .toList();
+    @GetMapping("/min-price")
+    public String getMinPrice() {
+        return wineService.getMinPrice()
+            .movePointLeft(2)
+            .setScale(0)
+            .toString();
     }
-    
+
     @GetMapping("/statuses")
     public List<String> getStatuses() {
         return Arrays.stream(AvailableStatus.values())

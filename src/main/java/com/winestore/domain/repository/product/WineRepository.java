@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 @Repository
 public interface WineRepository extends CrudRepository<Wine, Long> {
     Page<Wine> findAll(Specification<Wine> specification, Pageable pageable);
@@ -17,4 +19,16 @@ public interface WineRepository extends CrudRepository<Wine, Long> {
         "where cr.wine_id = :wineId " +
         "and cr.confirm = true", nativeQuery = true)
     Integer countRating(Long wineId);
+
+    @Query(value = "select min(w.price) " +
+        "from Wine w " +
+        "where w.available = true " +
+        "and w.visible = true")
+    BigDecimal getMinPrice();
+
+    @Query(value = "select max(w.price) " +
+        "from Wine w " +
+        "where w.available = true " +
+        "and w.visible = true")
+    BigDecimal getMaxPrice();
 }

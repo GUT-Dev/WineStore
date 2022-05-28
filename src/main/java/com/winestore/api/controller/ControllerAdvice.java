@@ -1,6 +1,7 @@
 package com.winestore.api.controller;
 
 import com.winestore.api.dto.ErrorDTO;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,7 @@ public class ControllerAdvice {
     private static final int NOT_FOUND = 2;
     private static final int BLOCKED = 3;
     private static final int BANED = 4;
+    private static final int ALREADY_EXISTS = 5;
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(InvalidParameterException.class)
@@ -52,7 +54,17 @@ public class ControllerAdvice {
         } else {
             error.setErrorCode(BANED);
         }
-        
+
+        return error;
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ErrorDTO handleAlreadyExistsException(DataIntegrityViolationException ex) {
+        ErrorDTO error = new ErrorDTO();
+        error.setErrorCode(ALREADY_EXISTS);
+        error.setMessage("Entity already exists in DB");
+
         return error;
     }
 }

@@ -6,10 +6,16 @@ import com.winestore.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
+
 public interface WineService extends BaseService<Wine> {
     Wine getById(Long id);
 
     Page<Wine> getPage(WineSearchFilter filter, Pageable pageable);
 
     int countRating(Long wineId);
+
+    BigDecimal getMaxPrice();
+
+    BigDecimal getMinPrice();
 }

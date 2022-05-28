@@ -7,11 +7,14 @@ import com.winestore.domain.specification.WineSpecBuilder;
 import com.winestore.service.product.WineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,7 +49,11 @@ public class WineServiceImpl implements WineService {
 
     @Override
     public Page<Wine> getPage(WineSearchFilter filter, Pageable pageable) {
-        return repository.findAll(getSpecification(filter), pageable);
+        Page<Wine> winesPage = repository.findAll(getSpecification(filter), pageable);
+        List<Wine> wines = winesPage.stream()
+            .peek(w -> w.setRating(countRating(w.getId())))
+            .toList();
+        return new PageImpl<>(wines, pageable, winesPage.getTotalElements());
     }
 
     @Override
@@ -65,5 +72,15 @@ public class WineServiceImpl implements WineService {
         builder.isVisible(filter.getIncludeNotVisible());
 
         return builder.build();
+    }
+
+    @Override
+    public BigDecimal getMaxPrice() {
+        return repository.getMaxPrice();
+    }
+
+    @Override
+    public BigDecimal getMinPrice() {
+        return repository.getMinPrice();
     }
 }
