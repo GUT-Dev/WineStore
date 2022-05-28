@@ -1,5 +1,6 @@
 package com.winestore.domain.entity.product;
 
+import com.winestore.enums.AvailableStatus;
 import com.winestore.enums.Sweetness;
 import com.winestore.enums.WineType;
 import lombok.Getter;
@@ -69,6 +70,13 @@ public class Wine implements Serializable {
     @Column(name = "available")
     private boolean available;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "available_status")
+    private AvailableStatus availableStatus;
+
+    @Column(name = "visible")
+    private boolean visible;
+
     @Column(name = "price")
     private BigDecimal price;
 
@@ -89,6 +97,7 @@ public class Wine implements Serializable {
     private BigDecimal priceWithSale;
 
     @PostLoad
+    @PostPersist
     private void countPriceWithSale() {
         if (discount != 0) {
             priceWithSale = BigDecimal.valueOf(price.longValue() - (price.longValue() * discount / 100));

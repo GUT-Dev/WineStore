@@ -1,6 +1,8 @@
 package com.winestore.domain.repository.cart;
 
 import com.winestore.domain.entity.cart.Cart;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -23,5 +25,5 @@ public interface CartRepository extends CrudRepository<Cart, Long> {
         "order by c.buyDate desc ")
     List<Cart> getOrdersHistory(Long userId);
 
-    List<Cart> findAllByAvailableFalseOrderByTrackingStatus();
+    List<Cart> findAll(Specification<Cart> specification, Sort sort);
 }

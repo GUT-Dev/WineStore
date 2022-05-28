@@ -4,6 +4,8 @@ import com.winestore.api.dto.user.UserAuthRequest;
 import com.winestore.domain.entity.user.CustomUserDetails;
 import com.winestore.domain.entity.user.User;
 
+import java.util.List;
+
 public interface UserService {
     CustomUserDetails findByEmail(String email);
 
@@ -18,4 +20,6 @@ public interface UserService {
     User getPrincipal();
 
     Long getPrincipalId();
+
+    List<String> getUserNames(String name);
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.security.InvalidParameterException;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -82,6 +83,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             return user;
         }
+    }
+
+    @Override
+    public List<String> getUserNames(String name) {
+        return userRepository.findAllNames(name);
     }
 
     @Override

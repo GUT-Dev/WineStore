@@ -4,8 +4,10 @@ import com.winestore.api.dto.cart.CartHistoryDTO;
 import com.winestore.api.dto.cart.CartTrackingDTO;
 import com.winestore.api.dto.cart.ChangeStatusDTO;
 import com.winestore.api.dto.cart.UserCartDTO;
+import com.winestore.api.dto.filters.OrdersFilter;
 import com.winestore.domain.entity.cart.Cart;
 import com.winestore.enums.TrackingStatus;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -25,5 +27,5 @@ public interface CartService {
 
     List<CartHistoryDTO> getHistory();
 
-    List<CartTrackingDTO> getOrders();
+    List<CartTrackingDTO> getOrders(OrdersFilter filter, Sort sort);
 }

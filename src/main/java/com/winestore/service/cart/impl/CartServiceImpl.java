@@ -1,6 +1,7 @@
 package com.winestore.service.cart.impl;
 
 import com.winestore.api.dto.cart.*;
+import com.winestore.api.dto.filters.OrdersFilter;
 import com.winestore.api.dto.product.WineListDTO;
 import com.winestore.api.mapper.cart.CartItemMapper;
 import com.winestore.api.mapper.user.UserMapper;
@@ -9,12 +10,15 @@ import com.winestore.domain.entity.cart.CartItem;
 import com.winestore.domain.entity.product.Wine;
 import com.winestore.domain.repository.cart.CartItemRepository;
 import com.winestore.domain.repository.cart.CartRepository;
+import com.winestore.domain.specification.CartSpecBuilder;
 import com.winestore.enums.TrackingStatus;
 import com.winestore.exception.OverProductAmountException;
 import com.winestore.service.cart.CartService;
 import com.winestore.service.product.WineService;
 import com.winestore.service.user.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -212,8 +216,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public List<CartTrackingDTO> getOrders() {
-        List<Cart> carts = cartRepository.findAllByAvailableFalseOrderByTrackingStatus();
+    public List<CartTrackingDTO> getOrders(OrdersFilter filter, Sort sort) {
+        List<Cart> carts = cartRepository.findAll(getSpecification(filter), sort);
 
         List<CartTrackingDTO> result = new ArrayList<>();
 
@@ -276,5 +280,17 @@ public class CartServiceImpl implements CartService {
         Wine wine = cartItem.getWine();
         cartItem.setAvailable(wine.getAmountForSale() > wine.getSoldAmount());
         return cartItemRepository.save(cartItem);
+    }
+
+    private Specification<Cart> getSpecification(OrdersFilter filter) {
+        CartSpecBuilder builder = new CartSpecBuilder();
+
+        builder.hasFirstName(filter.getFirstName());
+        builder.hasLastName(filter.getLastName());
+        builder.hasOrderId(filter.getOrderId());
+        builder.hasStatus(filter.getStatus());
+        builder.isEnabled(false);
+
+        return builder.build();
     }
 }

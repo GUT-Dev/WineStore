@@ -62,6 +62,13 @@ public class WineSpecBuilder {
         }
     }
 
+    public void isVisible(Boolean includeNotVisible) {
+        if (includeNotVisible == null || !includeNotVisible) {
+            specifications.add((root, query, cb) ->
+                cb.equal(root.get("visible"), true));
+        }
+    }
+
     public Specification<Wine> build() {
         if (specifications.isEmpty()) {
             return null;

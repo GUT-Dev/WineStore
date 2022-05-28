@@ -1,5 +1,6 @@
 package com.winestore.api.dto.product;
 
+import com.winestore.enums.AvailableStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,4 +15,5 @@ public class WineListDTO {
     private int discount;
     private boolean available;
     private int rating;
+    private AvailableStatus availableStatus;
 }
