@@ -8,10 +8,13 @@ import lombok.Setter;
 public class WineDTO extends WineListDTO {
     private String descriptions;
     private String type;
-    private String sweets;
-    private double strength;
+    private String sweetness;
+    private Double strength;
     private int sugarAmount;
     private String ean;
     private BrandDTO brand;
     private LandDTO land;
+    private String region;
+    private int amountForSale;
+    private boolean visible;
 }

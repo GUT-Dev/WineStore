@@ -1,25 +1,43 @@
 package com.winestore.api.controller.cart;
 
+import com.winestore.api.dto.cart.CartHistoryDTO;
+import com.winestore.api.dto.cart.PutInCartDTO;
+import com.winestore.api.dto.cart.UserCartDTO;
 import com.winestore.service.cart.CartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import static com.winestore.service.user.impl.UserServiceImpl.getPrincipalId;
+import java.util.List;
 
-@Controller
-@RequestMapping("cart")
+@RestController
+@RequestMapping("/cart")
 @RequiredArgsConstructor
 public class CartController {
 
     private final CartService service;
 
     @GetMapping
-    public String getCart(Model model) {
-        model.addAttribute("cart", service.getCartForUser(getPrincipalId()));
+    public UserCartDTO getCart() {
+        return service.getCart();
+    }
 
-        return "cart";
+    @PutMapping
+    public void putInCart(@RequestBody PutInCartDTO dto) {
+        service.addToCurt(dto.getWineId(), dto.getAmount());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteFromCart(@PathVariable Long id) {
+        service.removeFromCart(id);
+    }
+
+    @PutMapping("/buy")
+    public void buy() {
+        service.buy();
+    }
+
+    @GetMapping("/history")
+    public List<CartHistoryDTO> getHistory() {
+        return service.getHistory();
     }
 }

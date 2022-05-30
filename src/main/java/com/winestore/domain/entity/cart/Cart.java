@@ -1,6 +1,7 @@
 package com.winestore.domain.entity.cart;
 
 import com.winestore.domain.entity.user.User;
+import com.winestore.enums.TrackingStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -31,9 +33,14 @@ public class Cart implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(name = "cart__cart_item",
-        joinColumns = @JoinColumn(name = "cart_id"),
-        inverseJoinColumns = @JoinColumn(name = "cart_item_id"))
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+    @JoinColumn(name = "cart_id")
     private Set<CartItem> cartItems;
+
+    @Column(name = "buy_date")
+    private LocalDateTime buyDate;
+
+    @Enumerated
+    @Column(name = "tracking_status")
+    private TrackingStatus trackingStatus;
 }

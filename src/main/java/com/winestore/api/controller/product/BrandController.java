@@ -2,11 +2,10 @@ package com.winestore.api.controller.product;
 
 import com.winestore.api.dto.product.BrandDTO;
 import com.winestore.api.mapper.product.BrandMapper;
+import com.winestore.domain.entity.product.Brand;
 import com.winestore.service.product.BrandService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +22,11 @@ public class BrandController {
         return service.getAll().stream()
             .map(mapper::toDTO)
             .toList();
+    }
+
+    @PostMapping("/manager")
+    public BrandDTO create(@RequestBody BrandDTO dto) {
+        Brand brand = service.create(mapper.toEntity(dto));
+        return mapper.toDTO(brand);
     }
 }

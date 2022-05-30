@@ -1,20 +1,31 @@
 package com.winestore.service.cart;
 
+import com.winestore.api.dto.cart.CartHistoryDTO;
+import com.winestore.api.dto.cart.CartTrackingDTO;
+import com.winestore.api.dto.cart.ChangeStatusDTO;
+import com.winestore.api.dto.cart.UserCartDTO;
+import com.winestore.api.dto.filters.OrdersFilter;
 import com.winestore.domain.entity.cart.Cart;
+import com.winestore.enums.TrackingStatus;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface CartService {
 
-    Cart addToCurt(Long userId, Long wineId, int amount);
+    void addToCurt(Long wineId, int amount);
 
     Cart changeAmount(Long cartItemId, int amount);
 
-    Cart removeFromCart(Long cartItemId);
+    TrackingStatus changeStatus(ChangeStatusDTO dto);
 
-    void buy(Long cartId);
+    void removeFromCart(Long cartItemId);
 
-    Cart getCartForUser(Long userId);
+    void buy();
 
-    List<Cart> getHistory(Long userId);
+    UserCartDTO getCart();
+
+    List<CartHistoryDTO> getHistory();
+
+    List<CartTrackingDTO> getOrders(OrdersFilter filter, Sort sort);
 }

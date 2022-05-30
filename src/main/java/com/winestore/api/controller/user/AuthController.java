@@ -1,37 +1,40 @@
 package com.winestore.api.controller.user;
 
+import com.winestore.api.dto.user.UserAuthRequest;
+import com.winestore.api.dto.user.UserBaseDTO;
+import com.winestore.api.dto.user.UserRegistrationDTO;
+import com.winestore.api.mapper.user.UserMapper;
+import com.winestore.config.auth.JwtProvider;
 import com.winestore.domain.entity.user.User;
 import com.winestore.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
+    private final UserService service;
+    private final UserMapper mapper;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/registration")
-    public String create(@ModelAttribute("user") User user
-//                         BindingResult bindingResult
-    ) {
-//        if(userService.findUserByUsername(user.getUsername()) != null) {
-//            bindingResult.addError(new FieldError("user", "username", "This username already exists"));
-//            return "user/registration";
-//        }
-//        if(bindingResult.hasErrors()) {
-//            return "user/registration";
-//        }
-
-        userService.create(user);
-        return "redirect:wine";
+    public String registration(@RequestBody UserRegistrationDTO dto) {
+        User user = service.registration(mapper.toEntity(dto));
+        return jwtProvider.generateToken(user.getEmail());
     }
 
-    @GetMapping("/registration")
-    public String getForm(@ModelAttribute("user") User user) {
-        return "auth/registrationForm";
+    @PostMapping("/auth")
+    public String auth(@RequestBody UserAuthRequest dto) {
+        User user = service.findByAuthRequest(dto);
+        return jwtProvider.generateToken(user.getEmail());
+    }
+
+    @GetMapping("/principal")
+    public UserBaseDTO getPrincipal() {
+        return mapper.toBaseDTO(service.getPrincipal());
     }
 }

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -29,22 +28,19 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "api_key")
-    private String apiKey;
-
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "enabled")
@@ -56,22 +52,17 @@ public class User implements Serializable {
     @Column(name = "ban_reason")
     private String banReason;
 
-    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     private Address address;
 
     @Enumerated
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role_id")
+    @Column(name = "role")
     private Set<Role> roles;
 
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    public String encodePassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.encode(password);
-    }
 }
