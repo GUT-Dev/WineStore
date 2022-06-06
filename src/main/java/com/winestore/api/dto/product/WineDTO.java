@@ -3,6 +3,8 @@ package com.winestore.api.dto.product;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class WineDTO extends WineListDTO {
@@ -16,5 +18,5 @@ public class WineDTO extends WineListDTO {
     private LandDTO land;
     private String region;
     private int amountForSale;
-    private boolean visible;
+    private LocalDateTime createdAt;
 }

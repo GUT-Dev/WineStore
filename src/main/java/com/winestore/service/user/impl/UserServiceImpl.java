@@ -1,13 +1,17 @@
 package com.winestore.service.user.impl;
 
+import com.winestore.api.dto.user.ResetPasswordDTO;
 import com.winestore.api.dto.user.UserAuthRequest;
+import com.winestore.config.auth.JwtProvider;
 import com.winestore.domain.entity.user.CustomUserDetails;
 import com.winestore.domain.entity.user.User;
 import com.winestore.domain.repository.user.UserRepository;
 import com.winestore.enums.Role;
+import com.winestore.exception.WrongPasswordException;
 import com.winestore.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +35,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtProvider provider;
 
     @Override
     public CustomUserDetails findByEmail(String email) throws UsernameNotFoundException {
@@ -57,6 +64,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             throw new EntityNotFoundException();
         }
+    }
+
+    @Override
+    @Transactional
+    public String updateDetails(User user) {
+        User entity = userRepository.findById(user.getId())
+            .orElseThrow(EntityNotFoundException::new);
+
+        entity.setEmail(user.getEmail());
+        entity.setPhoneNumber(user.getPhoneNumber());
+        entity.setFirstName(user.getFirstName());
+        entity.setLastName(user.getLastName());
+
+        User updatedUser = userRepository.save(entity);
+        return auth(updatedUser.getEmail());
     }
 
     @Override
@@ -105,5 +127,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
+    }
+
+    @Override
+    @Transactional
+    public User resetPassword(ResetPasswordDTO dto) {
+        User principal = getPrincipal();
+        if (passwordEncoder.matches(dto.getOldPassword(), principal.getPassword())) {
+            principal.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+            return userRepository.save(principal);
+        } else {
+            throw new WrongPasswordException("Wrong password");
+        }
+    }
+
+    private String auth(String newEmail) {
+        CustomUserDetails customUserDetails = findByEmail(newEmail);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        return provider.generateToken(newEmail);
     }
 }

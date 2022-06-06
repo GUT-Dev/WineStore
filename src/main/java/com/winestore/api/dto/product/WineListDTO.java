@@ -14,6 +14,7 @@ public class WineListDTO {
     private String priceWithSale;
     private int discount;
     private boolean available;
+    private boolean visible;
     private int rating;
     private int soldAmount;
     private AvailableStatus availableStatus;

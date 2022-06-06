@@ -1,6 +1,7 @@
 package com.winestore.api.controller;
 
 import com.winestore.api.dto.ErrorDTO;
+import com.winestore.exception.WrongPasswordException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -64,6 +65,16 @@ public class ControllerAdvice {
         ErrorDTO error = new ErrorDTO();
         error.setErrorCode(ALREADY_EXISTS);
         error.setMessage("Entity already exists in DB");
+
+        return error;
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(WrongPasswordException.class)
+    public ErrorDTO handleWrongPasswordException(WrongPasswordException ex) {
+        ErrorDTO error = new ErrorDTO();
+        error.setMessage(ex.getMessage());
+        error.setErrorCode(1);
 
         return error;
     }

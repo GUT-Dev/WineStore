@@ -1,8 +1,10 @@
 package com.winestore.service.user.impl;
 
 import com.winestore.domain.entity.user.Address;
+import com.winestore.domain.entity.user.User;
 import com.winestore.domain.repository.user.AddressRepository;
 import com.winestore.service.user.AddressService;
+import com.winestore.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository repository;
+    private final UserService userService;
 
     public Address getById(Long id) {
         return repository.findById(id)
@@ -20,20 +23,20 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address create(Address address) {
-        return repository.save(address);
-    }
+    public Address save(Address address) {
+        User principal = userService.getPrincipal();
 
-    @Override
-    public Address update(Address address) {
-        if (repository.existsById(address.getId())) {
-            return repository.save(address);
+        Address userAddress = principal.getAddress();
+
+        if (userAddress == null) {
+            address = repository.save(address);
+            principal.setAddress(address);
+            userService.update(principal);
         } else {
-            throw new EntityNotFoundException();
+            address.setId(userAddress.getId());
+            address = repository.save(address);
         }
-    }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+        return address;
     }
 }

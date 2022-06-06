@@ -44,6 +44,12 @@ public class WineController {
         return mapper.toDTO(wine);
     }
 
+    @PutMapping
+    public WineDTO update(@RequestBody WineDTO dto) {
+        Wine wine = service.update(mapper.toEntity(dto));
+        return mapper.toDTO(wine);
+    }
+
     @GetMapping("/sweetness")
     public List<String> getSweetness() {
         return Arrays.stream(Sweetness.values())
