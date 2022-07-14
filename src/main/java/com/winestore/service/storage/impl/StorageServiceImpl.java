@@ -39,6 +39,7 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void deleteFile(String path) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
                 .key(getKeyFromPath(path))
                 .build();
 
