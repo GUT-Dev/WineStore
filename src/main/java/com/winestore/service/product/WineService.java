@@ -5,7 +5,9 @@ import com.winestore.domain.entity.product.Wine;
 import com.winestore.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 public interface WineService extends BaseService<Wine> {
@@ -18,4 +20,6 @@ public interface WineService extends BaseService<Wine> {
     BigDecimal getMaxPrice();
 
     BigDecimal getMinPrice();
+
+    String uploadImgForWine(Long wineId, MultipartFile file) throws IOException;
 }

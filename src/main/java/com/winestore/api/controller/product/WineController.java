@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +44,12 @@ public class WineController {
     public WineDTO create(@RequestBody WineDTO dto) {
         Wine wine = service.create(mapper.toEntity(dto));
         return mapper.toDTO(wine);
+    }
+
+    @PostMapping("/upload-img")
+    public String uploadImgForWine(@RequestParam Long wineId,
+                                   @RequestBody MultipartFile file) throws IOException {
+        return service.uploadImgForWine(wineId, file);
     }
 
     @GetMapping("/sweetness")

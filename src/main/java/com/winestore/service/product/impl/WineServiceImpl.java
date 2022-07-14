@@ -5,23 +5,30 @@ import com.winestore.domain.entity.product.Wine;
 import com.winestore.domain.repository.product.WineRepository;
 import com.winestore.domain.specification.WineSpecBuilder;
 import com.winestore.service.product.WineService;
+import com.winestore.service.storage.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class WineServiceImpl implements WineService {
 
     private final WineRepository repository;
+
+    private final StorageService storageService;
 
     @Override
     public Wine getById(Long id) {
@@ -82,5 +89,24 @@ public class WineServiceImpl implements WineService {
     @Override
     public BigDecimal getMinPrice() {
         return repository.getMinPrice();
+    }
+
+    @Override
+    @Transactional
+    public String uploadImgForWine(Long wineId, MultipartFile file) throws IOException {
+        Wine wine = getById(wineId);
+
+        if (wine.getImg() != null) {
+            storageService.deleteFile(wine.getImg());
+        }
+
+        final String key = UUID.randomUUID().toString();
+
+        String path = storageService.uploadFile(key, file.getContentType(), file.getInputStream(), file.getSize());
+
+        wine.setImg(path);
+        repository.save(wine);
+
+        return path;
     }
 }

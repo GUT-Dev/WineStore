@@ -5,13 +5,22 @@ spring:
     url: jdbc:postgresql://localhost:5432/winestore
   jpa:
     show-sql: true
-    generate-ddl: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
     properties.hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: true
 
   main:
     allow-circular-references: true
+
 jwt:
   secret: "_]/G.*wg;s2_'u>7M*T96"
+
+aws:
+  s3:
+    bucket-name: winestore-bucket
+    access-key: AKIAUJLGUXMYM4TQSV7X
+    secret-key: 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
 
