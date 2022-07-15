@@ -18,9 +18,3 @@ spring:
 jwt:
   secret: "_]/G.*wg;s2_'u>7M*T96"
 
-aws:
-  s3:
-    bucket-name: winestore-bucket
-    access-key: AKIAUJLGUXMYM4TQSV7X
-    secret-key: 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
-

@@ -2,3 +2,12 @@ spring:
   datasource:
     username: postgres
     password: test456
+
+aws:
+  s3:
+    bucket-name: winestore-bucket
+    access-key: AKIAUJLGUXMYM4TQSV7X
+    secret-key: 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
+  sns:
+    access-key: AKIAUJLGUXMYPX6C5Q5K
+    secret-key: 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
