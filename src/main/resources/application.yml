@@ -16,5 +16,5 @@ spring:
     allow-circular-references: true
 
 jwt:
-  secret: "_]/G.*wg;s2_'u>7M*T96"
+  secret: _]/G.*wg;s2_'u>7M*T96
 
