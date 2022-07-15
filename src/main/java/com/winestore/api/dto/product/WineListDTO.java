@@ -17,4 +17,5 @@ public class WineListDTO {
     private int rating;
     private int soldAmount;
     private AvailableStatus availableStatus;
+    private boolean visible;
 }

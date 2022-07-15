@@ -1,6 +1,6 @@
 package com.winestore.domain.dto;
 
-import com.winestore.domain.entity.product.Wine;
+import com.winestore.api.dto.product.WineListDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class WineViewDTO {
-    private Wine wine;
+    private WineListDTO wine;
     private Double rating;
 }

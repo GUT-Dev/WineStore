@@ -16,5 +16,4 @@ public class WineDTO extends WineListDTO {
     private LandDTO land;
     private String region;
     private int amountForSale;
-    private boolean visible;
 }
